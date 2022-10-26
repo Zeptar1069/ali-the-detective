@@ -1,11 +1,9 @@
 {
 	"name": "pupp-the-puppy",
 	"version": "1.0.0",
-	"main": "src/index.js",
+	"main": "src/index.ts",
 	"scripts": {
 		"start": "node .",
-		"lint": "prettier --check .; eslint .",
-		"format": "prettier . --write; eslint . --fix --format=pretty",
 		"test": "echo \"...\""
 	},
 	"author": "Zeptar1069 <terryk.onekorea@gmail.com>",
@@ -16,9 +14,7 @@
 		"pretty-ms": "^7.0.1"
 	},
 	"devDependencies": {
-		"dotenv": "^16.0.3",
-		"eslint": "^8.26.0",
-		"eslint-formatter-pretty": "^4.1.0",
-		"prettier": "^2.7.1"
+		"@types/glob": "^8.0.0",
+		"dotenv": "^16.0.3"
 	}
 }

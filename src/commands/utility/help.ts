@@ -1,29 +1,20 @@
-const {
-	EmbedBuilder,
-	ApplicationCommandType,
-	ActionRowBuilder,
-	ModalBuilder,
-	TextInputBuilder,
-	TextInputStyle,
-	SelectMenuBuilder,
-	ButtonBuilder,
-	ComponentType,
-} = require('discord.js');
-const ms = require('pretty-ms');
+import { Client, CommandInteraction, ApplicationCommandType, ComponentType, TextInputStyle, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "discord.js";
+import ms from 'pretty-ms';
 
-module.exports = {
+export default {
 	name: 'help',
 	description: 'Shows a list of commands, with a page of statistics',
 	type: ApplicationCommandType.ChatInput,
-	run: async (client, interaction, args) => {
+	run: async (client: Client, interaction: CommandInteraction, args: any[]) => {
 		const directories = [
-			...new Set(client.commands.map((cmd) => cmd.directory)),
+			...new Set((client as any).commands.map((cmd: any) => cmd.directory)),
 		];
-		const formatString = (str) => str[0].toUpperCase() + str.slice(1);
-		const categories = directories.map((dir) => {
-			const getCommands = client.commands
-				.filter((cmd) => cmd.directory === dir)
-				.map((cmd) => {
+
+		const formatString = (str: string) => str[0].toUpperCase() + str.slice(1);
+		const categories = directories.map((dir: any) => {
+			const getCommands = (client as any).commands
+				.filter((cmd: any) => cmd.directory === dir)
+				.map((cmd: any) => {
 					return {
 						name: cmd.name,
 						description: cmd.description,
@@ -71,24 +62,24 @@ module.exports = {
 		);
 		const embeds = {
 			menu: new EmbedBuilder()
-				.setTitle('Pupp The Puppy')
+				.setTitle('Ali The Detective')
 				.addFields({
-					name: 'Welcome to the world of Pupp The Puppy',
+					name: 'Welcome to the world of Ali The Detective',
 					value: 'Select 1 or more categories below in the dropdown menu. If you need to contact the owners, press the `contact` button below!',
 				})
 				.setImage('https://i.ibb.co/Hg79v5X/standard.gif')
 				.setFooter({
 					text:
-						client.commands.size.toString() +
+						(client as any).commands.size.toString() +
 						' commands in total',
 				})
 				.setColor(0x4b9cd3),
-			main: (directory, category) =>
+			main: (directory: string, category: string) =>
 				new EmbedBuilder()
 					.setTitle(formatString(directory) + ' Commands')
 					.setDescription(
 						`
-									${category.commands.map((cmd) => {
+									${(category as any).commands.map((cmd: any) => {
 							return (
 								'/' +
 								cmd.name +
@@ -100,9 +91,9 @@ module.exports = {
 					)
 					.setFooter({
 						text:
-							category.commands.length === 1
+							(category as any).commands.length === 1
 								? '1 command'
-								: category.commands.length + 'commands',
+								: (category as any).commands.length + 'commands',
 					})
 					.setColor(0x4b9cd3),
 			stats: new EmbedBuilder()
@@ -123,7 +114,7 @@ module.exports = {
 						name: 'Uptime',
 						value:
 							'```yaml\nStatus: Online\nUptime: ' +
-							ms(client.uptime) +
+							ms((client as any).uptime) +
 							'```',
 						inline: true,
 					},
@@ -140,7 +131,7 @@ module.exports = {
 						name: 'Bot Status',
 						value:
 							'```yaml\n- Commands: ' +
-							client.commands.size.toString() +
+							(client as any).commands.size.toString() +
 							' commands\n- Categories: 2 categories\n- Servers: ' +
 							client.guilds.cache.size +
 							' servers\n- Channels: ' +
@@ -160,7 +151,7 @@ module.exports = {
 		};
 		const msg = await interaction.followUp({
 			embeds: [embeds.menu],
-			components: [component1, component2],
+			components: [(component1 as any), (component2 as any)],
 		});
 		const collector1 = msg.createMessageComponentCollector({
 			componentType: ComponentType.SelectMenu,
@@ -170,15 +161,15 @@ module.exports = {
 			componentType: ComponentType.Button,
 			time: 30000,
 		});
-		collector1.on('collect', async (i) => {
+		(collector1 as any).on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.followUp({
 					embeds: [embeds.fail],
 					ephemeral: true,
 				});
 			}
-			await collector1.resetTimer();
-			await collector2.resetTimer();
+			collector1.resetTimer();
+			collector2.resetTimer();
 			await i.deferUpdate();
 			const [directory] = i.values;
 			const category = categories.find(
@@ -186,11 +177,11 @@ module.exports = {
 			);
 
 			await i.editReply({
-				embeds: [embeds.main(directory, category)],
+				embeds: [embeds.main(directory, (category as any))],
 			});
 		});
 
-		collector2.on('collect', async (i) => {
+		(collector2 as any).on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.reply({
 					embeds: [embeds.fail],
@@ -198,8 +189,8 @@ module.exports = {
 				});
 			}
 
-			await collector1.resetTimer();
-			await collector2.resetTimer();
+			collector1.resetTimer();
+			collector2.resetTimer();
 			if (i.customId === 'button-home') {
 				await i.deferUpdate();
 				await i.editReply({ embeds: [embeds.menu] });
@@ -235,7 +226,7 @@ module.exports = {
 				const messageRow = new ActionRowBuilder().addComponents(
 					inputs.message,
 				);
-				modal.addComponents(nameRow, messageRow);
+				modal.addComponents((nameRow as any), (messageRow as any));
 				await i.showModal(modal);
 			}
 
@@ -259,11 +250,11 @@ module.exports = {
 			}
 		});
 		collector1.on('end', async () => {
-			component1.components[0].data.disabled = true;
+			(component1 as any).components[0].data.disabled = true;
 			[0, 1, 2, 3].forEach((sum) => {
-				component2.components[sum].data.disabled = true;
+				(component2 as any).components[sum].data.disabled = true;
 			});
-			await msg.edit({ components: [component1, component2] });
+			await msg.edit({ components: [(component1 as any), (component2 as any)] });
 		});
 	},
 };

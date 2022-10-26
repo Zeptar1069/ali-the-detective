@@ -1,9 +1,6 @@
-const {
-	ApplicationCommandType,
-	ApplicationCommandOptionType,
-} = require('discord.js');
+import { ApplicationCommandType, ApplicationCommandOptionType, Client, CommandInteraction } from 'discord.js';
 
-module.exports = {
+export default {
 	name: 'balance',
 	description: 'Take a look at another person\'s balance, or your own',
 	type: ApplicationCommandType.ChatInput,
@@ -15,7 +12,7 @@ module.exports = {
 			required: false,
 		},
 	],
-	run: async (client, interaction, args) => {
+	run: async (client: Client, interaction: CommandInteraction, args: any[]) => {
 		/* const user = client.users.cache.get(args[0]) || interaction.user;
 
         const profile = {

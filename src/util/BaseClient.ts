@@ -1,19 +1,17 @@
-const {
-	Client,
-	Collection,
-	ActivityType,
-	ApplicationCommandOptionType,
-} = require('discord.js');
-const glob = require('util').promisify(require('glob').glob);
+import { Client, Collection, ActivityType, ApplicationCommandOptionType, Interaction } from 'discord.js';
+import { glob as Glob } from 'glob';
+const glob = require('util').promisify(Glob);
 
-module.exports = class Basethis extends Client {
+export default class BaseClient extends Client {
+	commands: Collection<unknown, unknown>;
+
 	constructor() {
 		super({ intents: [32767] });
 
 		this.commands = new Collection();
 
 		void this.login(process.env.token).then(async () => {
-			this.user.setPresence({
+			this.user?.setPresence({
 				activities: [
 					{
 						name: 'for /help',
@@ -23,51 +21,49 @@ module.exports = class Basethis extends Client {
 				status: 'idle',
 			});
 
-			const commands = [];
+			const commands: any[] = [];
 
-			(await glob(process.cwd() + '/src/commands/**/*.js')).map(
-				(value) => {
+			(await glob(process.cwd() + '/src/commands/**/*.ts')).map((value: string) => {
 					const splitted = value.split('/');
 					const directory = splitted[splitted.length - 2];
 					const command = require(value);
 					this.commands.set(command.name, { directory, ...command });
-					commands.push(command);
+					commands.push(command.default);
 				},
 			);
 
-			this.on(
-				'ready',
-				async () => await this.application.commands.set(commands),
-			);
+			console.log(commands)
 
-			this.on('interactionCreate', async (interaction) => {
+			this.on('ready', async () => {
+				await this.application?.commands.set(commands);
+			});
+
+			this.on('interactionCreate', async (interaction: Interaction) => {
 				if (interaction.isChatInputCommand()) {
 					await interaction.deferReply({ ephemeral: false });
+
 					const command = this.commands.get(interaction.commandName);
-					if (!command) {
-						return;
-					}
-					const args = [];
+					const args: any[] = [];
+
+					if (!command) return;
+
 					for (const option of interaction.options.data) {
-						if (
-							option.type ===
-							ApplicationCommandOptionType.Subcommand
-						) {
+						if (option.type === ApplicationCommandOptionType.Subcommand) {
 							option.name
 								? args.push(option.name)
 								: void option.options?.forEach(
-									async (value) => {
+									async (value: any) => {
 										if (value.value) {
 											args.push(value.value);
 										}
 									},
 								);
-						}
-						else if (option.value) {
+						} else if (option.value) {
 							args.push(option.value);
 						}
 					}
-					await command.run(this, interaction, args);
+
+					await (command as any).run(this, interaction, args);
 				}
 			});
 		});
