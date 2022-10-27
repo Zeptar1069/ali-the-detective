@@ -27,12 +27,10 @@ export default class BaseClient extends Client {
 					const splitted = value.split('/');
 					const directory = splitted[splitted.length - 2];
 					const command = require(value);
-					this.commands.set(command.name, { directory, ...command });
+					this.commands.set(command.default.name, { directory, ...command.default });
 					commands.push(command.default);
 				},
 			);
-
-			console.log(commands)
 
 			this.on('ready', async () => {
 				await this.application?.commands.set(commands);
