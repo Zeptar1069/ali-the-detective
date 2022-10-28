@@ -23,23 +23,25 @@ export default class BaseClient extends Client {
 
 			const commands: any[] = [];
 
-			(await glob(process.cwd() + '/src/commands/**/*.ts')).map((value: string) => {
-				const splitted = value.split('/');
-				const directory = splitted[splitted.length - 2];
+			(await glob(process.cwd() + '/src/commands/**/*.ts')).map(async (value: any) => {
+				const directory = value.split('/')[value.split('/').length - 2];
 				const command = require(value);
-				this.commands.set(command.default.name, { directory, ...command.default });
+
 				commands.push(command.default);
+				this.commands.set(command.default.name, { directory, ...command.default });
 			});
 
-			this.on('ready', async () => {
-				await this.application?.commands.set(commands);
-			});
+			this.once('ready', async () =>
+				await this.application?.commands.set(commands).then(async () =>
+					console.log('Online.'),
+				),
+			);
 
 			this.on('interactionCreate', async (interaction: Interaction) => {
 				if (interaction.isChatInputCommand()) {
 					await interaction.deferReply({ ephemeral: false });
 
-					const command = this.commands.get(interaction.commandName);
+					const command: any = this.commands.get(interaction.commandName);
 					const args: any[] = [];
 
 					if (!command) return;
@@ -60,7 +62,7 @@ export default class BaseClient extends Client {
 						}
 					}
 
-					await (command as any).run(this, interaction, args);
+					await command.run(this, interaction, args);
 				}
 			});
 		});
