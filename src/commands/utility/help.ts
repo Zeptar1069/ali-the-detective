@@ -1,18 +1,20 @@
-import { Client, CommandInteraction, ApplicationCommandType, ComponentType, TextInputStyle, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from "discord.js";
+import BaseClient from '../../util/BaseClient';
+import { CommandInteraction, ApplicationCommandType, ComponentType, TextInputStyle, EmbedBuilder, ActionRowBuilder, SelectMenuBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder } from 'discord.js';
 import ms from 'pretty-ms';
 
 export default {
 	name: 'help',
 	description: 'Shows a list of commands, with a page of statistics',
 	type: ApplicationCommandType.ChatInput,
-	run: async (client: Client, interaction: CommandInteraction, args: any[]) => {
+	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
+		console.log(interaction.commandId)
 		const directories = [
-			...new Set((client as any).commands.map((cmd: any) => cmd.directory)),
+			...new Set(client.commands.map((cmd: any) => cmd.directory)),
 		];
 
 		const formatString = (str: string) => str[0].toUpperCase() + str.slice(1);
 		const categories = directories.map((dir: any) => {
-			const getCommands = (client as any).commands
+			const getCommands = client.commands
 				.filter((cmd: any) => cmd.directory === dir)
 				.map((cmd: any) => {
 					return {
@@ -38,6 +40,7 @@ export default {
 					}),
 				),
 		);
+
 		const component2 = new ActionRowBuilder().addComponents(
 			new ButtonBuilder()
 				.setCustomId('button-home')
@@ -60,6 +63,7 @@ export default {
 				.setURL('https://discord.gg/rztpkEJQcg')
 				.setEmoji({ id: '1034529816562643045' }),
 		);
+
 		const embeds = {
 			menu: new EmbedBuilder()
 				.setTitle('Ali The Detective')
@@ -70,24 +74,17 @@ export default {
 				.setImage('https://i.ibb.co/Hg79v5X/standard.gif')
 				.setFooter({
 					text:
-						(client as any).commands.size.toString() +
+						client.commands.size.toString() +
 						' commands in total',
 				})
 				.setColor(0x4b9cd3),
-			main: (directory: string, category: string) =>
+			main: (directory: string, category: any) =>
 				new EmbedBuilder()
 					.setTitle(formatString(directory) + ' Commands')
 					.setDescription(
-						`
-									${(category as any).commands.map((cmd: any) => {
-							return (
-								'/' +
-								cmd.name +
-								'\nㅤ' +
-								cmd.description
-							);
-						})}
-								`,
+						category.commands.map((cmd: any) => {
+							return `</${cmd.name}:${cmd.id}>`;
+						}).toString(),
 					)
 					.setFooter({
 						text:
@@ -131,7 +128,7 @@ export default {
 						name: 'Bot Status',
 						value:
 							'```yaml\n- Commands: ' +
-							(client as any).commands.size.toString() +
+							client.commands.size.toString() +
 							' commands\n- Categories: 2 categories\n- Servers: ' +
 							client.guilds.cache.size +
 							' servers\n- Channels: ' +
@@ -149,19 +146,23 @@ export default {
 				)
 				.setColor(0xfa5f55),
 		};
+
 		const msg = await interaction.followUp({
 			embeds: [embeds.menu],
-			components: [(component1 as any), (component2 as any)],
+			components: [component1 as any, component2 as any],
 		});
+
 		const collector1 = msg.createMessageComponentCollector({
 			componentType: ComponentType.SelectMenu,
 			time: 40000,
 		});
+
 		const collector2 = msg.createMessageComponentCollector({
 			componentType: ComponentType.Button,
 			time: 30000,
 		});
-		(collector1 as any).on('collect', async (i: any) => {
+
+		collector1.on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.followUp({
 					embeds: [embeds.fail],
@@ -181,7 +182,7 @@ export default {
 			});
 		});
 
-		(collector2 as any).on('collect', async (i: any) => {
+		collector2.on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.reply({
 					embeds: [embeds.fail],
@@ -249,6 +250,7 @@ export default {
 					);
 			}
 		});
+
 		collector1.on('end', async () => {
 			(component1 as any).components[0].data.disabled = true;
 			[0, 1, 2, 3].forEach((sum) => {

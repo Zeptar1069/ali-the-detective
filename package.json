@@ -4,7 +4,8 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"start": "npx ts-node .",
-		"test": "echo \"...\""
+		"test": "echo \"...\"",
+		"lint": "eslint ."
 	},
 	"author": "Zeptar1069 <terryk.onekorea@gmail.com>",
 	"license": "MIT",
@@ -15,7 +16,10 @@
 	},
 	"devDependencies": {
 		"@types/glob": "^8.0.0",
+		"@typescript-eslint/eslint-plugin": "^5.41.0",
+		"@typescript-eslint/parser": "^5.41.0",
 		"dotenv": "^16.0.3",
+		"eslint": "^8.26.0",
 		"ts-node": "^10.9.1"
 	}
 }

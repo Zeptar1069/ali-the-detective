@@ -1,4 +1,5 @@
-import { ApplicationCommandType, ApplicationCommandOptionType, Client, CommandInteraction } from 'discord.js';
+import BaseClient from '../../util/BaseClient';
+import { ApplicationCommandType, ApplicationCommandOptionType, CommandInteraction } from 'discord.js';
 
 export default {
 	name: 'balance',
@@ -12,7 +13,7 @@ export default {
 			required: false,
 		},
 	],
-	run: async (client: Client, interaction: CommandInteraction, args: any[]) => {
+	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
 		/* const user = client.users.cache.get(args[0]) || interaction.user;
 
         const profile = {

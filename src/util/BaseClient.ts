@@ -24,13 +24,12 @@ export default class BaseClient extends Client {
 			const commands: any[] = [];
 
 			(await glob(process.cwd() + '/src/commands/**/*.ts')).map((value: string) => {
-					const splitted = value.split('/');
-					const directory = splitted[splitted.length - 2];
-					const command = require(value);
-					this.commands.set(command.default.name, { directory, ...command.default });
-					commands.push(command.default);
-				},
-			);
+				const splitted = value.split('/');
+				const directory = splitted[splitted.length - 2];
+				const command = require(value);
+				this.commands.set(command.default.name, { directory, ...command.default });
+				commands.push(command.default);
+			});
 
 			this.on('ready', async () => {
 				await this.application?.commands.set(commands);
@@ -66,4 +65,4 @@ export default class BaseClient extends Client {
 			});
 		});
 	}
-};
+}
