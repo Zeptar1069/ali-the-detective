@@ -14,7 +14,8 @@ export default {
 		},
 	],
 	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
-		/* const user = client.users.cache.get(args[0]) || interaction.user;
+		/* await interaction.deferReply({ ephemeral: false });
+        const user = client.users.cache.get(args[0]) || interaction.user;
 
         const profile = {
             wallet: await db.get(interaction.user.id + '.wallet'),
