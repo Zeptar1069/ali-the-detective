@@ -15,7 +15,7 @@
 		"discord.js": "^14.6.0",
 		"glob": "^8.0.3",
 		"pretty-ms": "^7.0.1",
-		"wandbox-api-updated": "^1.0.3"
+		"wandbox-api-updated": "^1.0.4"
 	},
 	"devDependencies": {
 		"@types/glob": "^8.0.0",
