@@ -135,12 +135,10 @@ export default class BaseClient extends Client {
 										.setColor(0xfa5f55)
 										.setTimestamp()
 										.setFooter({ text: 'Evaluation Error', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
-									error: new EmbedBuilder()
-									.setTitle('Compiling Error')
-									.setDescription('Programming language isn\'t valid. See all of the languages available [here](https://wandbox.org/)')
-									.setColor(0xfa5f55)
-									.setTimestamp()
-									.setFooter({ text: 'Invalid', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
+									error: (errorMessage: any) =>
+										new EmbedBuilder()
+											.setDescription(errorMessage + ' View all of the [availabe languages here](https://github.com/srz-zumix/wandbox-api#cli).\nIn addition, try not to use aliases. (`py` > `python`)')
+											.setColor(0xfa5f55),
 							};
 
 						let languageInput: any = language,
@@ -156,12 +154,12 @@ export default class BaseClient extends Client {
 								code,
 								compiler: languageVersion,
 							}).then(async (output: any) => {
-								if(output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] })
+								if(output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] });
 								await interaction.editReply({ embeds: [embeds.output(output.program_output, languageVersion)] });
-							}).catch(async (error: any) => {
-								await interaction.followUp({ embeds: [embeds.error], ephemeral: true });
-								console.error(error);
-							});
+							}).catch(console.error);
+						}).catch(async (error: any) => {
+							await interaction.followUp({ embeds: [embeds.error(error)], ephemeral: true });
+							console.error(error);
 						});
 					}
 				}

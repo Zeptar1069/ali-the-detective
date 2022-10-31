@@ -154,15 +154,11 @@ export default {
 					.setColor(0x4b9cd3)
 					.setFooter({ text: 'Statistics', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }) })
 					.setTimestamp(),
-				fail: (i: any) =>
-					new EmbedBuilder()
-						.setTitle('Interaction Failed')
+				fail: new EmbedBuilder()
 						.setDescription(
-							'This interaction is not for you. You can make your own interaction by using the /help command.',
+							'This interaction is\'nt for you. Try making your own interaction by using the </help:0> command.',
 						)
-						.setColor(0xfa5f55)
-						.setFooter({ text: 'Interaction Declined', iconURL: i.user.displayAvatarURL({ extension: 'png' }) })
-						.setTimestamp(),
+						.setColor(0xfa5f55),
 			},
 
 			msg = await interaction.followUp({
@@ -184,7 +180,7 @@ export default {
 		collectors.collector1.on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.followUp({
-					embeds: [embeds.fail(i)],
+					embeds: [embeds.fail],
 					ephemeral: true,
 				});
 			}
@@ -206,7 +202,7 @@ export default {
 		collectors.collector2.on('collect', async (i: any) => {
 			if (i.user.id !== interaction.user.id) {
 				return await i.reply({
-					embeds: [embeds.fail(i)],
+					embeds: [embeds.fail],
 					ephemeral: true,
 				});
 			}

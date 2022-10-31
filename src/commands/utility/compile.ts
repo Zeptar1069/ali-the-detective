@@ -13,7 +13,7 @@ export default {
 			component1: new ActionRowBuilder().addComponents(
 				new ButtonBuilder()
 					.setCustomId('code')
-					.setLabel('Code')
+					.setLabel('Insert Code')
 					.setStyle(2)
 					.setEmoji({
 						id: '1036058059719589928'
@@ -24,19 +24,15 @@ export default {
 			embeds: any = {
 				main: new EmbedBuilder()
 					.setTitle('Compile Code')
-					.setDescription('To insert code, click the code button below. When you\'re finished, submit the modal and the process will start.')
+					.setDescription('To insert code, click the insert code button below. You can keep inserting code multiple times.')
 					.setColor(0x4b9cd3)
 					.setFooter({ text: 'Setting up', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }) })
 					.setTimestamp(),
-				fail: (i: any) =>
-					new EmbedBuilder()
-						.setTitle('Interaction Failed')
+				fail: new EmbedBuilder()
 						.setDescription(
-							'This interaction is not for you. You can make your own interaction by using the /help command.',
+							'This interaction is\'nt for you. Try making your own interaction by using the </compile:0> command.',
 						)
-						.setColor(0xfa5f55)
-						.setFooter({ text: 'Interaction Declined', iconURL: i.user.displayAvatarURL({ extension: 'png' }) })
-						.setTimestamp(),
+						.setColor(0xfa5f55),
 			},
 
 			msg = await interaction.followUp({ embeds: [embeds.main], components: [components.component1] }),
