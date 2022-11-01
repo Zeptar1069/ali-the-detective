@@ -1,12 +1,11 @@
 import BaseClient from '../../util/BaseClient';
 import { ApplicationCommandType, CommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType, ModalBuilder, TextInputBuilder, TextInputStyle } from 'discord.js';
-const { fromString } = require('wandbox-api-updated');
 
 export default {
 	name: 'compile',
 	description: 'A safe, simple code compiler evaluation',
 	type: ApplicationCommandType.ChatInput,
-	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
+	run: async (_client: BaseClient, interaction: CommandInteraction, _args: string[]) => {
 		await interaction.deferReply({ ephemeral: false });
 
 		const components: any = {
@@ -29,10 +28,10 @@ export default {
 					.setFooter({ text: 'Setting up', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }) })
 					.setTimestamp(),
 				fail: new EmbedBuilder()
-						.setDescription(
-							'This interaction is\'nt for you. Try making your own interaction by using the </compile:0> command.',
-						)
-						.setColor(0xfa5f55),
+					.setDescription(
+						'This interaction is\'nt for you. Try making your own interaction by using the </compile:0> command.',
+					)
+					.setColor(0xfa5f55),
 			},
 
 			msg = await interaction.followUp({ embeds: [embeds.main], components: [components.component1] }),
@@ -40,7 +39,6 @@ export default {
 			collectors: any = {
 				collector1: msg.createMessageComponentCollector({
 					componentType: ComponentType.Button,
-					time: 40000,
 				}),
 			};
 
@@ -52,11 +50,10 @@ export default {
 				});
 			}
 
-			collectors.collector1.resetTimer();
-			if(i.customId === 'code') {
+			if (i.customId === 'code') {
 				const modal = new ModalBuilder()
-						.setCustomId('modal-compile')
-						.setTitle('Compile Code'),
+					.setCustomId('modal-compile')
+					.setTitle('Compile Code'),
 
 					inputs = {
 						language: new TextInputBuilder()

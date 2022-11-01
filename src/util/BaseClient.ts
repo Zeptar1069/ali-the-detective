@@ -1,4 +1,5 @@
 import { Client, Collection, ActivityType, ApplicationCommandOptionType, Interaction, GatewayIntentBits, Partials, Events, EmbedBuilder } from 'discord.js';
+import { connect } from 'mongoose';
 import { glob as Glob } from 'glob';
 
 const { fromString, getCompilers } = require('wandbox-api-updated');
@@ -24,6 +25,8 @@ export default class BaseClient extends Client {
 		});
 
 		this.commands = new Collection();
+
+		void connect(process.env.mongoKey as any);
 
 		void this.login(process.env.token).then(async () => {
 			this.user?.setPresence({
@@ -78,8 +81,8 @@ export default class BaseClient extends Client {
 					await command.run(this, interaction, args);
 				}
 
-				if(interaction.isModalSubmit()) {
-					if(interaction.customId === 'modal-contact') {
+				if (interaction.isModalSubmit()) {
+					if (interaction.customId === 'modal-contact') {
 						const message = interaction.fields.getTextInputValue('message-input'),
 							type = interaction.fields.getTextInputValue('type-input'),
 							embeds: any = {
@@ -99,7 +102,6 @@ export default class BaseClient extends Client {
 									.setTimestamp()
 									.setColor(0x4b9cd3)
 									.setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
-								
 							};
 
 						await interaction.deferReply({ ephemeral: true });
@@ -107,38 +109,38 @@ export default class BaseClient extends Client {
 						this.users.cache.get('893211748767768606')?.send({ embeds: [embeds.request] });
 					}
 
-					if(interaction.customId === 'modal-compile') {
+					if (interaction.customId === 'modal-compile') {
 						const language: any = interaction.fields.getTextInputValue('language-input'),
 							code = interaction.fields.getTextInputValue('code-input'),
 							embeds: any = {
 								output: (output: any, languageType: any) =>
 									new EmbedBuilder()
 										.setTitle('Compiled Code')
-										.setDescription('Compiled and evaluated successfully!')
+										.setDescription('Compiled and evaluated successfully')
 										.addFields(
-											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '```' },
-											{ name: 'Complied Type', value: '`' + languageType + '`' },
-											{ name: 'Compiled Output', value: '```' + language + '\n' + output + '```' },
+											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '\n```', inline: true },
+											{ name: 'Language Version', value: '```yaml\n' + languageType + '\n```', inline: true },
+											{ name: 'Compiled Output', value: '```' + (output ? language : '') + '\n' + (output ? output : 'No output was received while evaluating.') + '\n```' },
 										)
 										.setColor(0x4b9cd3)
 										.setTimestamp()
-										.setFooter({ text: 'Evaluation Succeeded', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
+										.setFooter({ text: 'Compilied', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
 								outputError: (outputError: any, languageType: any) =>
 									new EmbedBuilder()
 										.setTitle('Compiling Error')
 										.setDescription('There was an error in your given code.')
 										.addFields(
-											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '```' },
-											{ name: 'Complied Type', value: '`' + languageType + '`' },
-											{ name: 'Compiling Error', value: '```' + outputError + '```' },
+											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '\n```', inline: true },
+											{ name: 'Complied Type', value: '```yaml\n' + languageType + '\n```', inline: true },
+											{ name: 'Compiling Error', value: '```' + outputError + '\n```' },
 										)
 										.setColor(0xfa5f55)
 										.setTimestamp()
-										.setFooter({ text: 'Evaluation Error', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
-									error: (errorMessage: any) =>
-										new EmbedBuilder()
-											.setDescription(errorMessage + ' View all of the [availabe languages here](https://github.com/srz-zumix/wandbox-api#cli).\nIn addition, try not to use aliases. (`py` > `python`)')
-											.setColor(0xfa5f55),
+										.setFooter({ text: 'Error', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
+								error: (errorMessage: any) =>
+									new EmbedBuilder()
+										.setDescription(errorMessage + ' View all of the [availabe languages here](https://github.com/srz-zumix/wandbox-api#cli).\nIn addition, try not to use aliases. (`py` > `python`)')
+										.setColor(0xfa5f55),
 							};
 
 						let languageInput: any = language,
@@ -146,7 +148,7 @@ export default class BaseClient extends Client {
 
 						await interaction.deferUpdate();
 
-						if(language.toLowerCase().startsWith('node')) languageInput = 'javascript';
+						if (language.toLowerCase().startsWith('node')) languageInput = 'javascript';
 
 						getCompilers(languageInput).then((input: any) => {
 							languageVersion = input[0].name;
@@ -154,7 +156,7 @@ export default class BaseClient extends Client {
 								code,
 								compiler: languageVersion,
 							}).then(async (output: any) => {
-								if(output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] });
+								if (output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] });
 								await interaction.editReply({ embeds: [embeds.output(output.program_output, languageVersion)] });
 							}).catch(console.error);
 						}).catch(async (error: any) => {

@@ -18,11 +18,13 @@ export default {
 	description: 'Shows a list of commands, with a page of statistics',
 	type: ApplicationCommandType.ChatInput,
 	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
-		await interaction.deferReply({ ephemeral: false });
+		await interaction.deferReply({
+			ephemeral: false
+		});
 
 		const directories = [
-				...new Set(client.commands.map((cmd: any) => cmd.directory)),
-			],
+			...new Set(client.commands.map((cmd: any) => cmd.directory)),
+		],
 
 			formatString = (str: string) => str[0].toUpperCase() + str.slice(1),
 			categories = directories.map((dir: string) => {
@@ -55,6 +57,7 @@ export default {
 							}),
 						),
 				),
+
 				component2: new ActionRowBuilder().addComponents(
 					new ButtonBuilder()
 						.setCustomId('button-home')
@@ -86,7 +89,7 @@ export default {
 						}),
 				),
 			},
-        
+
 			embeds: any = {
 				menu: new EmbedBuilder()
 					.setTitle('Ali The Detective')
@@ -97,8 +100,10 @@ export default {
 					.setImage('https://i.ibb.co/Hg79v5X/standard.gif')
 					.setFooter({
 						text: client.commands.size.toString() +
-                        ' commands in total',
-						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+							' commands in total',
+						iconURL: interaction.user.displayAvatarURL({
+							extension: 'png'
+						}),
 					})
 					.setColor(0x4b9cd3)
 					.setTimestamp(),
@@ -112,9 +117,10 @@ export default {
 						)
 						.setFooter({
 							text: category.commands.length === 1 ?
-								'1 command' :
-								category.commands.length + ' commands',
-							iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+								'1 command' : category.commands.length + ' commands',
+							iconURL: interaction.user.displayAvatarURL({
+								extension: 'png'
+							}),
 						})
 						.setTimestamp()
 						.setColor(0x4b9cd3),
@@ -123,17 +129,17 @@ export default {
 					.addFields({
 						name: 'Ping Latency',
 						value: '```yaml\nAPI: ' +
-                        client.ws.ping +
-                        'ms\nMessage: ' +
-                        Math.floor(
-                        	Math.random() * (300 - 20) + 20,
-                        ) +
-                        'ms\n```',
+							client.ws.ping +
+							'ms\nMessage: ' +
+							Math.floor(
+								Math.random() * (300 - 20) + 20,
+							) +
+							'ms\n```',
 					}, {
 						name: 'Uptime',
 						value: '```yaml\nStatus: Online\nUptime: ' +
-                        ms((client as any).uptime) +
-                        '```',
+							ms((client as any).uptime) +
+							'```',
 						inline: true,
 					}, {
 						name: 'Author',
@@ -142,23 +148,28 @@ export default {
 					}, {
 						name: 'Bot Status',
 						value: '```yaml\n- Commands: ' +
-                        client.commands.size.toString() +
-                        ' commands\n- Categories: 2 categories\n- Servers: ' +
-                        client.guilds.cache.size +
-                        ' servers\n- Channels: ' +
-                        client.channels.cache.size +
-                        ' channels\n- Users: ' +
-                        client.users.cache.size +
-                        ' users\n```',
-					}, )
+							client.commands.size.toString() +
+							' commands\n- Categories: 2 categories\n- Servers: ' +
+							client.guilds.cache.size +
+							' servers\n- Channels: ' +
+							client.channels.cache.size +
+							' channels\n- Users: ' +
+							client.users.cache.size +
+							' users\n```',
+					},)
 					.setColor(0x4b9cd3)
-					.setFooter({ text: 'Statistics', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }) })
+					.setFooter({
+						text: 'Statistics',
+						iconURL: interaction.user.displayAvatarURL({
+							extension: 'png'
+						})
+					})
 					.setTimestamp(),
 				fail: new EmbedBuilder()
-						.setDescription(
-							'This interaction is\'nt for you. Try making your own interaction by using the </help:0> command.',
-						)
-						.setColor(0xfa5f55),
+					.setDescription(
+						'This interaction is\'nt for you. Try making your own interaction by using the </help:0> command.',
+					)
+					.setColor(0xfa5f55),
 			},
 
 			msg = await interaction.followUp({
@@ -169,11 +180,9 @@ export default {
 			collectors: any = {
 				collector1: msg.createMessageComponentCollector({
 					componentType: ComponentType.SelectMenu,
-					time: 40000,
 				}),
 				collector2: msg.createMessageComponentCollector({
 					componentType: ComponentType.Button,
-					time: 30000,
 				}),
 			};
 
@@ -207,9 +216,6 @@ export default {
 				});
 			}
 
-			collectors.collector1.resetTimer();
-			collectors.collector2.resetTimer();
-
 			if (i.customId === 'button-home') {
 				await i.deferUpdate();
 				await i.editReply({
@@ -219,8 +225,8 @@ export default {
 
 			if (i.customId === 'button-contact') {
 				const modal = new ModalBuilder()
-						.setCustomId('modal-contact')
-						.setTitle('Contact'),
+					.setCustomId('modal-contact')
+					.setTitle('Contact'),
 
 					inputs = {
 						type: new TextInputBuilder()
@@ -263,20 +269,8 @@ export default {
 									embeds: [embeds.stats],
 								}),
 							1000,
-						), );
+						),);
 			}
-		});
-
-		collectors.collector1.on('end', async () => {
-			components.component1.components[0].data.disabled = true;
-          
-			[0, 1, 2, 3].forEach((sum) => {
-				components.component2.components[sum].data.disabled = true;
-			});
-          
-			await msg.edit({
-				components: [components.component1, components.component2]
-			});
 		});
 	},
 };
