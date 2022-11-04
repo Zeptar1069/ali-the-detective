@@ -15,11 +15,18 @@ export default {
 		},
 	],
 	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
+		/* Types */
 		type Profile = {
 			wallet: number,
 			bank: number,
 		};
 
+		type Embeds = {
+			bot: EmbedBuilder;
+			main: EmbedBuilder;
+		};
+
+		/* Interaction */
 		await interaction.deferReply({ ephemeral: false });
 
 		const user: User = client.users.cache.get(args[0]) || interaction.user;
@@ -35,7 +42,7 @@ export default {
 				if (net > 90000 && net <= 800000) return 'Nice, the perfect amount for a rich person!';
 				if (net > 800000) return 'Too much, less fun. Time for you to prestige!';
 			},
-			embeds = {
+			embeds: Embeds = {
 				bot: new EmbedBuilder()
 					.setTitle(`${user.username}'s Balance`)
 					.setDescription(condition({ wallet: 50000, bank: 50000 }))

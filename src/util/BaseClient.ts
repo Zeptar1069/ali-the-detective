@@ -5,6 +5,26 @@ import { glob as Glob } from 'glob';
 const { fromString, getCompilers } = require('wandbox-api-updated');
 const glob = require('util').promisify(Glob);
 
+type CommandOptions = {
+	default: {
+		name: string;
+		description: string;
+		type: number;
+		run: Function;
+	};
+}
+
+type ContactEmbeds = {
+	main: EmbedBuilder;
+	request: EmbedBuilder;
+}
+
+type CompileEmbeds = {
+	output: Function;
+	outputError: Function;
+	error: Function;
+}
+
 export default class BaseClient extends Client {
 	commands: Collection<unknown, unknown>;
 
@@ -26,7 +46,7 @@ export default class BaseClient extends Client {
 
 		this.commands = new Collection();
 
-		void connect(process.env.mongoKey as any);
+		void connect(process.env.mongoKey as string);
 
 		void this.login(process.env.token).then(async () => {
 			this.user?.setPresence({
@@ -41,9 +61,9 @@ export default class BaseClient extends Client {
 
 			const commands: any[] = [];
 
-			(await glob(process.cwd() + '/src/commands/**/*.ts')).map(async (value: any) => {
-				const directory = value.split('/')[value.split('/').length - 2],
-					command = require(value);
+			(await glob(process.cwd() + '/src/commands/**/*.ts')).map(async (value: string) => {
+				const directory: string = value.split('/')[value.split('/').length - 2],
+					command: CommandOptions = require(value);
 
 				commands.push(command.default);
 				this.commands.set(command.default.name, { directory, ...command.default });
@@ -83,9 +103,8 @@ export default class BaseClient extends Client {
 
 				if (interaction.isModalSubmit()) {
 					if (interaction.customId === 'modal-contact') {
-						const message = interaction.fields.getTextInputValue('message-input'),
-							type = interaction.fields.getTextInputValue('type-input'),
-							embeds: any = {
+						const message: string = interaction.fields.getTextInputValue('message-input'),
+							embeds: ContactEmbeds = {
 								main: new EmbedBuilder()
 									.setTitle('Successfully Sent')
 									.setDescription('Your message has been successfully sent to the owner.')
@@ -96,12 +115,10 @@ export default class BaseClient extends Client {
 									.setTitle('New Message')
 									.addFields(
 										{ name: 'Message', value: message },
-										{ name: 'Type', value: type },
-										{ name: 'Author', value: interaction.user.tag },
 									)
 									.setTimestamp()
 									.setColor(0x4b9cd3)
-									.setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
+									.setFooter({ text: interaction.user.tag, iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
 							};
 
 						await interaction.deferReply({ ephemeral: true });
@@ -110,28 +127,26 @@ export default class BaseClient extends Client {
 					}
 
 					if (interaction.customId === 'modal-compile') {
-						const language: any = interaction.fields.getTextInputValue('language-input'),
-							code = interaction.fields.getTextInputValue('code-input'),
-							embeds: any = {
-								output: (output: any, languageType: any) =>
+						const language: string = interaction.fields.getTextInputValue('language-input'),
+							code: string = interaction.fields.getTextInputValue('code-input'),
+							embeds: CompileEmbeds = {
+								output: (output: string, languageType: string) =>
 									new EmbedBuilder()
 										.setTitle('Compiled Code')
-										.setDescription('Compiled and evaluated successfully')
+										.setDescription('Compiled and evaluated successfully\n```' + languageType + '```')
 										.addFields(
 											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '\n```', inline: true },
-											{ name: 'Language Version', value: '```yaml\n' + languageType + '\n```', inline: true },
 											{ name: 'Compiled Output', value: '```' + (output ? language : '') + '\n' + (output ? output : 'No output was received while evaluating.') + '\n```' },
 										)
 										.setColor(0x4b9cd3)
 										.setTimestamp()
 										.setFooter({ text: 'Compilied', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
-								outputError: (outputError: any, languageType: any) =>
+								outputError: (outputError: string, languageType: string) =>
 									new EmbedBuilder()
 										.setTitle('Compiling Error')
-										.setDescription('There was an error in your given code.')
+										.setDescription('There was an error in your given code.\n```' + languageType + '```')
 										.addFields(
 											{ name: 'Compiled Input', value: '```' + language + '\n' + code + '\n```', inline: true },
-											{ name: 'Complied Type', value: '```yaml\n' + languageType + '\n```', inline: true },
 											{ name: 'Compiling Error', value: '```' + outputError + '\n```' },
 										)
 										.setColor(0xfa5f55)
@@ -143,14 +158,14 @@ export default class BaseClient extends Client {
 										.setColor(0xfa5f55),
 							};
 
-						let languageInput: any = language,
-							languageVersion: any;
+						let languageInput: string = language,
+							languageVersion: string;
 
 						await interaction.deferUpdate();
 
 						if (language.toLowerCase().startsWith('node')) languageInput = 'javascript';
 
-						getCompilers(languageInput).then((input: any) => {
+						getCompilers(languageInput).then((input: any[]) => {
 							languageVersion = input[0].name;
 							fromString({
 								code,
@@ -159,10 +174,7 @@ export default class BaseClient extends Client {
 								if (output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] });
 								await interaction.editReply({ embeds: [embeds.output(output.program_output, languageVersion)] });
 							}).catch(console.error);
-						}).catch(async (error: any) => {
-							await interaction.followUp({ embeds: [embeds.error(error)], ephemeral: true });
-							console.error(error);
-						});
+						}).catch(async (error: string) => await interaction.followUp({ embeds: [embeds.error(error)], ephemeral: true }));
 					}
 				}
 			});

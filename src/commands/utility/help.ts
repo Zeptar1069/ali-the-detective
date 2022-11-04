@@ -229,14 +229,6 @@ export default {
 					.setTitle('Contact'),
 
 					inputs = {
-						type: new TextInputBuilder()
-							.setCustomId('type-input')
-							.setLabel('Message Type')
-							.setPlaceholder('Issue / Feature Request')
-							.setStyle(TextInputStyle.Short)
-							.setMinLength(5)
-							.setMaxLength(20)
-							.setRequired(true),
 						message: new TextInputBuilder()
 							.setCustomId('message-input')
 							.setLabel('Message')
@@ -248,8 +240,6 @@ export default {
 					};
 
 				modal.addComponents([(new ActionRowBuilder().addComponents(
-					inputs.type,
-				) as any), (new ActionRowBuilder().addComponents(
 					inputs.message,
 				)) as any]);
 				await i.showModal(modal);
