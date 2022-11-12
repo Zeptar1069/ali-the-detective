@@ -1,5 +1,5 @@
 import BaseClient from '../../util/BaseClient';
-import { ApplicationCommandType, CommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType, ModalBuilder, TextInputBuilder, TextInputStyle, Message, InteractionCollector, ButtonInteraction, CacheType, AnyComponentBuilder } from 'discord.js';
+import { ApplicationCommandType, CommandInteraction, ActionRowBuilder, ButtonBuilder, EmbedBuilder, ComponentType, ModalBuilder, TextInputBuilder, TextInputStyle, Message, InteractionCollector, ButtonInteraction, CacheType } from 'discord.js';
 
 export default {
 	name: 'compile',
@@ -45,7 +45,10 @@ export default {
 					.setTitle('Compile Code')
 					.setDescription('To insert code, click the insert code button below. You can keep inserting code multiple times.')
 					.setColor(0x4b9cd3)
-					.setFooter({ text: 'Setting up', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }) })
+					.setFooter({
+						text: interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+					})
 					.setTimestamp(),
 				fail: new EmbedBuilder()
 					.setDescription(
@@ -98,7 +101,7 @@ export default {
 						second: new ActionRowBuilder().addComponents(
 							inputs.code,
 						)
-					}
+					};
 
 				modal.addComponents(actionRows.first, actionRows.second);
 				await i.showModal(modal);

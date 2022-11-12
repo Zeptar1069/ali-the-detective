@@ -9,7 +9,12 @@ import {
 	SelectMenuBuilder,
 	ButtonBuilder,
 	ModalBuilder,
-	TextInputBuilder
+	TextInputBuilder,
+	Message,
+	InteractionCollector,
+	SelectMenuInteraction,
+	CacheType,
+	ButtonInteraction
 } from 'discord.js';
 import ms from 'pretty-ms';
 
@@ -18,16 +23,35 @@ export default {
 	description: 'Shows a list of commands, with a page of statistics',
 	type: ApplicationCommandType.ChatInput,
 	run: async (client: BaseClient, interaction: CommandInteraction, args: string[]) => {
+		/* Types */
+		type Components = {
+			component1: any;
+			component2: any;
+		}
+
+		type Embeds = {
+			menu: EmbedBuilder;
+			main: Function;
+			stats: EmbedBuilder;
+			fail: EmbedBuilder;
+		}
+
+		type Collectors = {
+			collector1: InteractionCollector<SelectMenuInteraction<CacheType>>;
+			collector2: InteractionCollector<ButtonInteraction<CacheType>>;
+		}
+
+		/* Interaction */
 		await interaction.deferReply({
 			ephemeral: false
 		});
 
-		const directories = [
+		const directories: any[] = [
 			...new Set(client.commands.map((cmd: any) => cmd.directory)),
 		],
 
-			formatString = (str: string) => str[0].toUpperCase() + str.slice(1),
-			categories = directories.map((dir: string) => {
+			formatString: Function = (str: string) => str[0].toUpperCase() + str.slice(1),
+			categories: any[] = directories.map((dir: string) => {
 				const getCommands = client.commands
 					.filter((cmd: any) => cmd.directory === dir)
 					.map((cmd: any) => {
@@ -43,7 +67,7 @@ export default {
 				};
 			}),
 
-			components: any = {
+			components: Components = {
 				component1: new ActionRowBuilder().addComponents(
 					new SelectMenuBuilder()
 						.setCustomId('menu-help')
@@ -90,7 +114,7 @@ export default {
 				),
 			},
 
-			embeds: any = {
+			embeds: Embeds = {
 				menu: new EmbedBuilder()
 					.setTitle('Ali The Detective')
 					.addFields({
@@ -99,11 +123,8 @@ export default {
 					})
 					.setImage('https://i.ibb.co/Hg79v5X/standard.gif')
 					.setFooter({
-						text: client.commands.size.toString() +
-							' commands in total',
-						iconURL: interaction.user.displayAvatarURL({
-							extension: 'png'
-						}),
+						text: client.commands.size.toString() + ' commands in total',
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
 					})
 					.setColor(0x4b9cd3)
 					.setTimestamp(),
@@ -116,11 +137,8 @@ export default {
 							}).join('\n'),
 						)
 						.setFooter({
-							text: category.commands.length === 1 ?
-								'1 command' : category.commands.length + ' commands',
-							iconURL: interaction.user.displayAvatarURL({
-								extension: 'png'
-							}),
+							text: category.commands.length === 1 ? '1 command' : category.commands.length + ' commands',
+							iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
 						})
 						.setTimestamp()
 						.setColor(0x4b9cd3),
@@ -159,10 +177,8 @@ export default {
 					},)
 					.setColor(0x4b9cd3)
 					.setFooter({
-						text: 'Statistics',
-						iconURL: interaction.user.displayAvatarURL({
-							extension: 'png'
-						})
+						text: interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
 					})
 					.setTimestamp(),
 				fail: new EmbedBuilder()
@@ -172,12 +188,12 @@ export default {
 					.setColor(0xfa5f55),
 			},
 
-			msg = await interaction.followUp({
+			msg: Message = await interaction.followUp({
 				embeds: [embeds.menu],
 				components: [components.component1, components.component2],
 			}),
 
-			collectors: any = {
+			collectors: Collectors = {
 				collector1: msg.createMessageComponentCollector({
 					componentType: ComponentType.SelectMenu,
 				}),
@@ -198,8 +214,8 @@ export default {
 			collectors.collector2.resetTimer();
 
 			await i.deferUpdate();
-			const [directory] = i.values;
-			const category = categories.find(
+			const [directory]: string = i.values;
+			const category: any[] = categories.find(
 				(cmd: any) => cmd.directory.toLowerCase() === directory,
 			);
 
@@ -224,42 +240,35 @@ export default {
 			}
 
 			if (i.customId === 'button-contact') {
-				const modal = new ModalBuilder()
+				const modal: ModalBuilder = new ModalBuilder()
 					.setCustomId('modal-contact')
 					.setTitle('Contact'),
 
-					inputs = {
-						message: new TextInputBuilder()
-							.setCustomId('message-input')
-							.setLabel('Message')
-							.setPlaceholder('Type your question/issue here')
-							.setStyle(TextInputStyle.Paragraph)
-							.setMinLength(10)
-							.setMaxLength(100)
-							.setRequired(true),
-					};
+					input: TextInputBuilder = new TextInputBuilder()
+						.setCustomId('message-input')
+						.setLabel('Message')
+						.setPlaceholder('Type your question/issue here')
+						.setStyle(TextInputStyle.Paragraph)
+						.setMinLength(10)
+						.setMaxLength(100)
+						.setRequired(true),
 
-				modal.addComponents([(new ActionRowBuilder().addComponents(
-					inputs.message,
-				)) as any]);
+					actionRow: any = new ActionRowBuilder().addComponents(input);
+
+				modal.addComponents([actionRow]);
 				await i.showModal(modal);
 			}
 
 			if (i.customId === 'button-stats') {
 				await i.deferUpdate();
-				await i
-					.editReply({
-						content: 'Getting ready...',
-						embeds: [],
-					}).then(async () =>
-						setTimeout(
-							async () =>
-								await i.editReply({
-									content: null,
-									embeds: [embeds.stats],
-								}),
-							1000,
-						),);
+				await i.editReply({ content: 'Getting ready...', embeds: [] }).then(async () =>
+					setTimeout(async () =>
+						await i.editReply({
+							content: null,
+							embeds: [embeds.stats],
+						}),
+					1000,
+					));
 			}
 		});
 	},
