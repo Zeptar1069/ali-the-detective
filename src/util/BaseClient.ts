@@ -23,6 +23,7 @@ type CompileEmbeds = {
 	output: Function;
 	outputError: Function;
 	error: Function;
+	compileError: Function;
 }
 
 export default class BaseClient extends Client {
@@ -152,9 +153,13 @@ export default class BaseClient extends Client {
 										.setColor(0xfa5f55)
 										.setTimestamp()
 										.setFooter({ text: 'Error', iconURL: interaction.user.displayAvatarURL({ extension: 'png' }), }),
-								error: (errorMessage: any) =>
+								error: (errorMessage: string) =>
 									new EmbedBuilder()
 										.setDescription(errorMessage + ' View all of the [availabe languages here](https://github.com/srz-zumix/wandbox-api#cli).\nIn addition, try not to use aliases. (`py` > `python`)')
+										.setColor(0xfa5f55),
+								compileError: (errorMessage: string) =>
+									new EmbedBuilder()
+										.setDescription(errorMessage + ' Try pressing the `Insert Code` button to try again.')
 										.setColor(0xfa5f55),
 							};
 
@@ -173,7 +178,7 @@ export default class BaseClient extends Client {
 							}).then(async (output: any) => {
 								if (output.program_error !== '') return await interaction.editReply({ embeds: [embeds.outputError(output.program_error, languageVersion)] });
 								await interaction.editReply({ embeds: [embeds.output(output.program_output, languageVersion)] });
-							}).catch(console.error);
+							}).catch(async (error: string) => await interaction.followUp({ embeds: [embeds.compileError(error)], ephemeral: true }));
 						}).catch(async (error: string) => await interaction.followUp({ embeds: [embeds.error(error)], ephemeral: true }));
 					}
 				}
