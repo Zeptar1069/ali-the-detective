@@ -45,17 +45,18 @@ export default {
 			embeds: Embeds = {
 				bot: new EmbedBuilder()
 					.setTitle(`${user.username}'s Balance`)
-					.setDescription(condition({ wallet: 50000, bank: 50000 }))
+					.setDescription('Look at that! Bots are certainly rich')
 					.addFields([
-						{ name: 'Wallet', value: '```fix\n✪ 50000\n```', inline: true },
-						{ name: 'Bank', value: '```fix\n✪ 50000\n```', inline: true },
-						{ name: 'Net', value: '```fix\n✪ 100000\n```', inline: true },
+						{ name: 'Wallet', value: '```fix\n✪ 500000\n```', inline: true },
+						{ name: 'Bank', value: '```fix\n✪ 500000\n```', inline: true },
+						{ name: 'Net', value: '```fix\n✪ 1000000\n```', inline: true },
 					])
 					.setColor(0xfAA61A)
 					.setFooter({
 						text: interaction.user.username,
 						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
-					}),
+					})
+					.setTimestamp(),
 				main: new EmbedBuilder()
 					.setTitle(`${user.username}'s Balance`)
 					.setDescription(condition(profile))
@@ -68,7 +69,8 @@ export default {
 					.setFooter({
 						text: interaction.user.username,
 						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
-					}),
+					})
+					.setTimestamp(),
 			};
 
 		return await interaction.followUp({ embeds: [embeds.main] });

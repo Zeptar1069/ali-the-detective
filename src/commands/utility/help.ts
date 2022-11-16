@@ -180,12 +180,22 @@ export default {
 						text: interaction.user.username,
 						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
 					})
+					.setTimestamp()
+					.setFooter({
+						text: interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+					})
 					.setTimestamp(),
 				fail: new EmbedBuilder()
 					.setDescription(
 						'This interaction is\'nt for you. Try making your own interaction by using the </help:0> command.',
 					)
-					.setColor(0xfa5f55),
+					.setColor(0xfa5f55)
+					.setFooter({
+						text: interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+					})
+					.setTimestamp(),
 			},
 
 			msg: Message = await interaction.followUp({
