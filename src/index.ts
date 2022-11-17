@@ -1,4 +1,4 @@
 import 'dotenv/config';
 import Client from './util/BaseClient';
 
-new Client();
+Promise.resolve(Client).then(() => new Client());

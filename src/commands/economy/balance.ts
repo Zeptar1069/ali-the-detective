@@ -73,6 +73,8 @@ export default {
 					.setTimestamp(),
 			};
 
+		if (interaction.user.bot) return await interaction.followUp({ embeds: [embeds.bot] });
+
 		return await interaction.followUp({ embeds: [embeds.main] });
 	},
 };

@@ -28,6 +28,7 @@ type CompileEmbeds = {
 
 export default class BaseClient extends Client {
 	commands: Collection<unknown, unknown>;
+	owner: any;
 
 	constructor() {
 		super({
@@ -46,10 +47,12 @@ export default class BaseClient extends Client {
 		});
 
 		this.commands = new Collection();
+		this.owner = null;
 
 		void connect(process.env.mongoKey as string);
 
 		void this.login(process.env.token).then(async () => {
+			this.owner = this.users.fetch('893211748767768606');
 			this.user?.setPresence({
 				activities: [
 					{
@@ -159,7 +162,7 @@ export default class BaseClient extends Client {
 										.setColor(0xfa5f55),
 								compileError: (errorMessage: string) =>
 									new EmbedBuilder()
-										.setDescription(errorMessage + ' Try pressing the `Insert Code` button to try again.')
+										.setDescription(errorMessage + '. Try pressing the `Insert Code` button to try again.')
 										.setColor(0xfa5f55),
 							};
 

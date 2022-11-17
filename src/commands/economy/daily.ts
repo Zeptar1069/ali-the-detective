@@ -8,9 +8,25 @@ export default {
 	description: 'Get a bundle of money each 24 hours, streaks add up more!',
 	type: ApplicationCommandType.ChatInput,
 	run: async (_client: BaseClient, interaction: CommandInteraction, _args: string[]) => {
-		const profile = await balance.findOne({ userID: interaction.user.id }) || await new balance({ userID: interaction.user.id }).save(),
-			{ cooldown } = await daily.findOne({ userID: interaction.user.id }) || await new daily({ userID: interaction.user.id }),
-			embeds = {
+		/* Types */
+		type Profile = {
+			wallet: number,
+			bank: number,
+		};
+
+		type Embeds = {
+			fail: Function;
+			main: EmbedBuilder;
+		};
+
+		type Cooldown = {
+			cooldown: number;
+		}
+
+		/* Interaction */
+		const profile: Profile = await balance.findOne({ userID: interaction.user.id }) || await new balance({ userID: interaction.user.id }).save(),
+			{ cooldown }: Cooldown = await daily.findOne({ userID: interaction.user.id }) || await new daily({ userID: interaction.user.id }),
+			embeds: Embeds = {
 				fail: (hours: number) => new EmbedBuilder()
 					.setDescription('You\'ve already claimed your daily today, try again in <t:' + Math.floor(hours / 1000) + ':R>.')
 					.setColor(0xfa5f55),

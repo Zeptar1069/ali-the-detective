@@ -14,7 +14,8 @@ import {
 	InteractionCollector,
 	SelectMenuInteraction,
 	CacheType,
-	ButtonInteraction
+	ButtonInteraction,
+	User
 } from 'discord.js';
 import ms from 'pretty-ms';
 
@@ -161,7 +162,7 @@ export default {
 						inline: true,
 					}, {
 						name: 'Author',
-						value: '```yaml\nName: Zeptar\nGithub: Zeptar1069```',
+						value: '```yaml\nDiscord: ' + await client.owner.then((user: User) => `${user.username}#${user.discriminator}`) + '\nGithub: Zeptar1069```',
 						inline: true,
 					}, {
 						name: 'Bot Status',
