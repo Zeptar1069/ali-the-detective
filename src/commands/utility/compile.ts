@@ -82,14 +82,14 @@ export default {
 						language: new TextInputBuilder()
 							.setCustomId('language-input')
 							.setLabel('Programming Language')
-							.setPlaceholder('Javascript')
+							.setPlaceholder('Enter what language your code is in here')
 							.setStyle(TextInputStyle.Short)
 							.setMaxLength(20)
 							.setRequired(true),
 						code: new TextInputBuilder()
 							.setCustomId('code-input')
 							.setLabel('Code')
-							.setPlaceholder('Type your code to evaluate here')
+							.setPlaceholder('Enter your code to evaluate here')
 							.setStyle(TextInputStyle.Paragraph)
 							.setRequired(true),
 					},

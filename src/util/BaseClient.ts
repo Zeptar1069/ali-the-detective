@@ -37,7 +37,6 @@ export default class BaseClient extends Client {
 				GatewayIntentBits.GuildMembers,
 				GatewayIntentBits.GuildEmojisAndStickers,
 				GatewayIntentBits.GuildPresences,
-				GatewayIntentBits.DirectMessages,
 			],
 			partials: [
 				Partials.Channel,

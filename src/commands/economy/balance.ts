@@ -29,19 +29,10 @@ export default {
 		/* Interaction */
 		await interaction.deferReply({ ephemeral: false });
 
-		const user: User = client.users.cache.get(args[0]) || interaction.user;
+		const user: User = client.users.cache.get(args[0]) || interaction.user,
 
-		const profile: Profile = await balance.findOne({ userID: user.id }) || await new balance({ userID: user.id }).save();
+			profile: Profile = await balance.findOne({ userID: user.id }) || await new balance({ userID: user.id }).save(),
 
-		const condition: Function = (balance: { wallet: number, bank: number }) => {
-			const net = balance.wallet + balance.bank;
-			if (net <= 2000) return 'Too poor for living? Keep grinding until you get there!';
-			if (net > 2000 && net <= 10000) return 'Your balance still wouldn\'t be enough for living...';
-			if (net > 10000 && net <= 30000) return 'Just the right amount for a perfect life!';
-			if (net > 30000 && net <= 90000) return 'Isn\'t that more than enough, or is it?';
-			if (net > 90000 && net <= 800000) return 'Nice, the perfect amount for a rich person!';
-			if (net > 800000) return 'Too much, less fun. Time for you to prestige!';
-		},
 			embeds: Embeds = {
 				bot: new EmbedBuilder()
 					.setTitle(`${user.username}'s Balance`)
@@ -59,7 +50,7 @@ export default {
 					.setTimestamp(),
 				main: new EmbedBuilder()
 					.setTitle(`${user.username}'s Balance`)
-					.setDescription(condition(profile))
+					.setDescription('Do you seem too poor? If so, grinding is one solution!')
 					.addFields([
 						{ name: 'Wallet', value: '```fix\n✪ ' + profile.wallet + '\n```', inline: true },
 						{ name: 'Bank', value: '```fix\n✪ ' + profile.bank + '\n```', inline: true },

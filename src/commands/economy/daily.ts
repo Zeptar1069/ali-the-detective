@@ -31,9 +31,17 @@ export default {
 					.setDescription('You\'ve already claimed your daily today, try again in <t:' + Math.floor(hours / 1000) + ':R>.')
 					.setColor(0xfa5f55),
 				main: new EmbedBuilder()
-					.setTitle(interaction.user.username + '\'s Reward')
-					.setDescription('`✪ 500` was added to your wallet!')
-					.setColor(0xfAA61A),
+					.setTitle(interaction.user.username + '\'s Daily')
+					.setDescription('`✪ 500` was added to your wallet. Use </balance:0> to see how rich you are!')
+					.addFields(
+						{ name: 'Streak Bonus', value: 'Coming soon!' }
+					)
+					.setColor(0xfAA61A)
+					.setFooter({
+						text: interaction.user.username,
+						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
+					})
+					.setTimestamp(),
 			};
 
 		if (86400000 - (Date.now() - cooldown) > 0) {
