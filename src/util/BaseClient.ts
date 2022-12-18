@@ -69,13 +69,17 @@ export default class BaseClient extends Client {
 					command: CommandOptions = require(value);
 
 				commands.push(command.default);
-				this.commands.set(command.default.name, { directory, ...command.default });
+				this.commands.set(command.default.name, { directory, id: '', ...command.default });
 			});
 
 			this.once(Events.ClientReady, async () =>
-				await this.application?.commands.set(commands).then(async () =>
-					console.log('Online.'),
-				),
+				await this.application?.commands.set(commands).then(async () => {
+					(await this.application?.commands.fetch())?.toJSON().map((cmd) => {
+						(this.commands.get(cmd.name) as any).id = cmd.id;
+					});
+
+					console.log('Online.');
+				}),
 			);
 
 			this.on(Events.InteractionCreate, async (interaction: Interaction) => {

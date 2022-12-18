@@ -133,9 +133,9 @@ export default {
 					new EmbedBuilder()
 						.setTitle(formatString(directory) + ' Commands')
 						.setDescription(
-							category.commands.map((cmd: any) => {
-								return `</${cmd.name}:0>\n<:connection:1036070328843120660> ${cmd.description}`;
-							}).join('\n'),
+							category.commands.map((cmd: any) => 
+								`</${cmd.name}:${cmd.id}>\n<:connection:1036070328843120660> ${cmd.description}`,
+							).join('\n'),
 						)
 						.setFooter({
 							text: category.commands.length === 1 ? '1 command' : category.commands.length + ' commands',
