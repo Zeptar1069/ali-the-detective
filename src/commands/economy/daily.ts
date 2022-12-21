@@ -1,5 +1,5 @@
 import BaseClient from '../../util/BaseClient';
-import { ApplicationCommandType, ApplicationCommandOptionType, CommandInteraction, EmbedBuilder, User } from 'discord.js';
+import { ApplicationCommandType, CommandInteraction, EmbedBuilder } from 'discord.js';
 import balance from '../../schema/balance';
 import daily from '../../schema/daily';
 
@@ -33,9 +33,6 @@ export default {
 				main: new EmbedBuilder()
 					.setTitle(interaction.user.username + '\'s Daily')
 					.setDescription('`✪ 500` was added to your wallet. Use </balance:0> to see how rich you are!')
-					.addFields(
-						{ name: 'Streak Bonus', value: 'Coming soon!' }
-					)
 					.setColor(0xfAA61A)
 					.setFooter({
 						text: interaction.user.username,

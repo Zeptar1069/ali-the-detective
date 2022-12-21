@@ -6,7 +6,8 @@
 		"start": "ts-node .",
 		"test": "echo cat > test.txt; rm -rf test.txt",
 		"lint": "eslint .",
-		"fix": "eslint . --fix"
+		"fix": "eslint . --fix",
+		"dev": "nodemon --exec npm start"
 	},
 	"author": "Zeptar1069 <terryk.onekorea@gmail.com>",
 	"license": "MIT",
@@ -20,11 +21,18 @@
 		"pretty-ms": "^7.0.1",
 		"ts-node": "^10.9.1",
 		"typescript": "^4.9.3",
-		"wandbox-api-updated": "^1.0.4"
+		"wandbox-api-updated": "^1.0.3"
 	},
 	"devDependencies": {
+<<<<<<< HEAD
 		"@typescript-eslint/eslint-plugin": "^5.47.0",
 		"@typescript-eslint/parser": "^5.47.0",
 		"eslint": "^8.30.0"
+=======
+		"@typescript-eslint/eslint-plugin": "^5.43.0",
+		"@typescript-eslint/parser": "^5.43.0",
+		"eslint": "^8.27.0",
+		"nodemon": "^2.0.20"
+>>>>>>> 2833a82 (job: update commands)
 	}
 }

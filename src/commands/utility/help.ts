@@ -122,7 +122,7 @@ export default {
 						name: 'Welcome to the world of Ali The Detective',
 						value: 'Select 1 or more categories below in the dropdown menu. If you need to contact the owners, press the `contact` button below!',
 					})
-					.setImage('https://i.ibb.co/Hg79v5X/standard.gif')
+					.setImage('https://i.ibb.co/Tgq1kXc/standard-1.gif')
 					.setFooter({
 						text: client.commands.size.toString() + ' commands in total',
 						iconURL: interaction.user.displayAvatarURL({ extension: 'png' }),
