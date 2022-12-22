@@ -6,13 +6,13 @@ import {
 	TextInputStyle,
 	EmbedBuilder,
 	ActionRowBuilder,
-	SelectMenuBuilder,
+	StringSelectMenuBuilder,
 	ButtonBuilder,
 	ModalBuilder,
 	TextInputBuilder,
 	Message,
 	InteractionCollector,
-	SelectMenuInteraction,
+	StringSelectMenuInteraction,
 	CacheType,
 	ButtonInteraction,
 	User
@@ -38,7 +38,7 @@ export default {
 		}
 
 		type Collectors = {
-			collector1: InteractionCollector<SelectMenuInteraction<CacheType>>;
+			collector1: InteractionCollector<StringSelectMenuInteraction<CacheType>>;
 			collector2: InteractionCollector<ButtonInteraction<CacheType>>;
 		}
 
@@ -70,7 +70,7 @@ export default {
 
 			components: Components = {
 				component1: new ActionRowBuilder().addComponents(
-					new SelectMenuBuilder()
+					new StringSelectMenuBuilder()
 						.setCustomId('menu-help')
 						.setPlaceholder('Select 1 or more categories')
 						.addOptions(
@@ -206,7 +206,7 @@ export default {
 
 			collectors: Collectors = {
 				collector1: msg.createMessageComponentCollector({
-					componentType: ComponentType.SelectMenu,
+					componentType: ComponentType.StringSelect,
 				}),
 				collector2: msg.createMessageComponentCollector({
 					componentType: ComponentType.Button,
